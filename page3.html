@@ -40,6 +40,18 @@
             background-color: #222;
         }
 
+        h1 {
+            color: #fafafa;
+            text-shadow: 0 0 15px rgba(255, 255, 255, .5), 0 0 10px rgba(255, 255, 255, .5);
+            font-family: 'honyaji-reregular', sans-serif;
+            font-size: 3rem;
+            position: absolute;
+            opacity: 0.1;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         #rain-container {
             position: relative;
             width: 100%;
@@ -135,6 +147,59 @@
             color: var(--other-color);
         }
 
+        #play-button {
+            display: block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #invisibleInput {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.4;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #fafafa;
+            caret-color: #fafafa;
+            z-index: 2000;
+            text-align: center;
+            line-height: 1.5;
+            font-size: 2rem;
+            height: fit-content;
+            color: #fafafa;
+            font-family: 'honyaji-reregular', sans-serif;
+            width: 4em;
+        }
+
+        #invisibleInput:focus {
+            outline: none;
+        }
+
+        /* New styles for the label */
+        label[for="invisibleInput"] {
+            position: absolute;
+            top: calc(30% - 2.5rem);
+            /* Position it below the input */
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fafafa;
+            font-family: 'honyaji-reregular', sans-serif;
+            font-size: 1rem;
+            opacity: 0.7;
+            z-index: 2000;
+            white-space: nowrap;
+        }
+
+        /* Optional: Add some spacing between the input and label */
+        #invisibleInput+label[for="invisibleInput"] {
+            margin-top: 1rem;
+            opacity: 0.2;
+        }
+
+
         /**********************
         * INPUT SLIDER STYLE *
         **********************/
@@ -206,7 +271,7 @@
 <body>
 
     <div id="controls">
-        <input type="range" id="drop-rate-slider" min="100" max="2000" value="500">
+        <input type="range" id="drop-rate-slider" min="100" max="2000" value="100">
     </div>
 
     <div id="legend">
@@ -235,7 +300,9 @@
     </div>
 
 
-
+    <h1>Kanji Rain</h1>
+    <input type="text" id="invisibleInput">
+    <label for="invisibleInput">Drop # kanji:</label>
 
     <div id="rain-container"></div>
     <script>
@@ -270,6 +337,15 @@
         const kanjiStudied = kanji.slice(0, studied);
         const rainContainer = document.getElementById("rain-container");
         const dropRateSlider = document.getElementById("drop-rate-slider");
+        const playButton = document.createElement("button");
+        playButton.textContent = "Play";
+        playButton.id = "play-button";
+        dropRateSlider.parentNode.insertBefore(playButton, dropRateSlider.nextSibling);
+
+        let isPlaying = false;
+        let animationId;
+
+        playButton.addEventListener("click", toggleSimulation);
 
         const totalKanjiElement = document.getElementById("total-kanji");
         const n5PercentageElement = document.getElementById("n5-percentage");
@@ -365,15 +441,15 @@
 
         let lastDropTime = 0;
         function updateRaindrops(time) {
+            if (!isPlaying) return;
             const dropInterval = 2100 - dropRateSlider.value; // Reverse the calculation
             if (time - lastDropTime >= dropInterval) {
                 createOrderedRaindrop();
                 lastDropTime = time;
             }
-            requestAnimationFrame(updateRaindrops);
+            animationId = requestAnimationFrame(updateRaindrops);
         }
 
-        requestAnimationFrame(updateRaindrops);
 
 
 
@@ -480,6 +556,28 @@
                 kanjiCount.other++;
             }
             updateStatistics();
+        }
+
+
+        function toggleSimulation() {
+            if (isPlaying) {
+                stopSimulation();
+            } else {
+                startSimulation();
+            }
+        }
+
+        function startSimulation() {
+            isPlaying = true;
+            playButton.textContent = "Pause";
+            lastDropTime = 0;
+            animationId = requestAnimationFrame(updateRaindrops);
+        }
+
+        function stopSimulation() {
+            isPlaying = false;
+            playButton.textContent = "Play";
+            cancelAnimationFrame(animationId);
         }
 
 
