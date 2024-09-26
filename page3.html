@@ -74,7 +74,7 @@
 
         #legend {
             position: absolute;
-            top: 10px;
+            top: 30px;
             right: 10px;
             color: #fafafa;
             padding: 10px;
@@ -98,7 +98,7 @@
 
         #statistics {
             position: absolute;
-            top: 10px;
+            top: 30px;
             left: 10px;
             padding: 10px;
             border-radius: 5px;
@@ -133,6 +133,72 @@
 
         #none-percentage {
             color: var(--none-color);
+        }
+
+        /**********************
+        * INPUT SLIDER STYLE *
+        **********************/
+        input {
+            --c: orange;
+            /* active color */
+            --g: 2px;
+            /* the gap */
+            --l: 2px;
+            /* line thickness*/
+            --s: 20px;
+            /* thumb size*/
+
+            width: 400px;
+            height: var(--s);
+            /* needed for Firefox*/
+            --_c: color-mix(in srgb, var(--c), #000 var(--p, 0%));
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: none;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        input:focus-visible,
+        input:hover {
+            --p: 25%;
+        }
+
+        input:active,
+        input:focus-visible {
+            --_b: var(--s)
+        }
+
+        /* chromium */
+        input[type="range" i]::-webkit-slider-thumb {
+            height: var(--s);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            box-shadow: 0 0 0 var(--_b, var(--l)) inset var(--_c);
+            border-image: linear-gradient(90deg, var(--_c) 50%, #ababab 0) 0 1/calc(50% - var(--l)/2) 100vw/0 calc(100vw + var(--g));
+            -webkit-appearance: none;
+            appearance: none;
+            transition: .3s;
+        }
+
+        /* Firefox */
+        input[type="range"]::-moz-range-thumb {
+            height: var(--s);
+            width: var(--s);
+            background: none;
+            border-radius: 50%;
+            box-shadow: 0 0 0 var(--_b, var(--l)) inset var(--_c);
+            border-image: linear-gradient(90deg, var(--_c) 50%, #ababab 0) 0 1/calc(50% - var(--l)/2) 100vw/0 calc(100vw + var(--g));
+            -moz-appearance: none;
+            appearance: none;
+            transition: .3s;
+        }
+
+        @supports not (color: color-mix(in srgb, red, red)) {
+            input {
+                --_c: var(--c);
+            }
         }
     </style>
 </head>
@@ -293,7 +359,8 @@
 
         let lastDropTime = 0;
         function updateRaindrops(time) {
-            if (time - lastDropTime >= dropRateSlider.value) {
+            const dropInterval = 2100 - dropRateSlider.value; // Reverse the calculation
+            if (time - lastDropTime >= dropInterval) {
                 createOrderedRaindrop();
                 lastDropTime = time;
             }
