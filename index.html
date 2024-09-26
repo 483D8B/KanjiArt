@@ -166,6 +166,14 @@
                 div.className = 'grid-item';
                 div.textContent = shuffledKanji[i % shuffledKanji.length];
                 div.style.backgroundColor = colors[colorGrid[Math.floor(i / numColumns)][i % numColumns]];
+
+                // Add click event to navigate to page3.html when clicking on the third cell (index 2)
+                if (i === 2) {
+                    div.addEventListener('click', () => {
+                        window.location.href = 'page3.html';
+                    });
+                }
+
                 grid.appendChild(div);
                 gridItems.push(div);
             }
