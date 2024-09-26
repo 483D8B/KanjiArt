@@ -47,7 +47,7 @@
             font-size: 3rem;
             position: absolute;
             opacity: 0.1;
-            top: 15%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
@@ -87,18 +87,19 @@
         #legend {
             position: absolute;
             top: 30px;
-            right: 10px;
-            color: #fafafa;
+            left: 10px;
             padding: 10px;
             border-radius: 5px;
             z-index: 1000;
             user-select: none;
+            color: #fafafa;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
             margin-bottom: 5px;
+            margin: 5px 0;
         }
 
         .legend-color {
@@ -108,20 +109,6 @@
             margin-right: 10px;
         }
 
-        #statistics {
-            position: absolute;
-            top: 30px;
-            left: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 1000;
-            user-select: none;
-            color: #fafafa;
-        }
-
-        #statistics p {
-            margin: 5px 0;
-        }
 
         #n5-percentage {
             color: var(--N5-color);
@@ -148,11 +135,21 @@
         }
 
         #play-button {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: block;
-            margin-top: 10px;
+            margin-top: 15px;
             padding: 5px 10px;
             font-size: 16px;
             cursor: pointer;
+            border: 1px solid #fafafa;
+            background-color: transparent;
+            color: #fafafa;
+            font-family: 'honyaji-reregular', sans-serif;
+            user-select: none;
+            border-radius: 5px;
         }
 
         #invisibleInput {
@@ -272,32 +269,31 @@
 
     <div id="controls">
         <input type="range" id="drop-rate-slider" min="100" max="2000" value="100">
+        <button id="play-button">Play</button>
     </div>
 
     <div id="legend">
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N5-color)"></span> JLPT N5
+        <p>Total Kanji: <span id="total-kanji">0</span></p>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N5-color)"></span>
+            <p>JLPT N5: <span id="n5-percentage">0%</span></p>
         </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N4-color)"></span> JLPT N4
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N4-color)"></span>
+            <p>JLPT N4: <span id="n4-percentage">0%</span></p>
         </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N3-color)"></span> JLPT N3
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N3-color)"></span>
+            <p>JLPT N3: <span id="n3-percentage">0%</span></p>
         </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N2-color)"></span> JLPT N2
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N2-color)"></span>
+            <p>JLPT N2: <span id="n2-percentage">0%</span></p>
         </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N1-color);"></span> JLPT N1
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N1-color);"></span>
+            <p>JLPT N1: <span id="n1-percentage">0%</span></p>
         </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--other-color);"></span>Others
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--other-color);"></span>
+            <p>Others: <span id="other-percentage">0%</span></p>
         </div>
     </div>
 
-    <div id="statistics">
-        <p>Total Kanji: <span id="total-kanji">0</span></p>
-        <p>JLPT N5: <span id="n5-percentage">0%</span></p>
-        <p>JLPT N4: <span id="n4-percentage">0%</span></p>
-        <p>JLPT N3: <span id="n3-percentage">0%</span></p>
-        <p>JLPT N2: <span id="n2-percentage">0%</span></p>
-        <p>JLPT N1: <span id="n1-percentage">0%</span></p>
-        <p>Others: <span id="other-percentage">0%</span></p>
-    </div>
 
 
     <h1>Kanji Rain</h1>
@@ -326,24 +322,16 @@
         };
 
 
-
-
-
-
-
-
-
-        const studied = 2300;
-        const kanjiStudied = kanji.slice(0, studied);
-        const rainContainer = document.getElementById("rain-container");
-        const dropRateSlider = document.getElementById("drop-rate-slider");
-        const playButton = document.createElement("button");
-        playButton.textContent = "Play";
-        playButton.id = "play-button";
-        dropRateSlider.parentNode.insertBefore(playButton, dropRateSlider.nextSibling);
+        let studied = 0;
+        let kanjiStudied = [];
 
         let isPlaying = false;
         let animationId;
+
+
+        const rainContainer = document.getElementById("rain-container");
+        const dropRateSlider = document.getElementById("drop-rate-slider");
+        const playButton = document.getElementById("play-button");
 
         playButton.addEventListener("click", toggleSimulation);
 
@@ -579,6 +567,20 @@
             playButton.textContent = "Play";
             cancelAnimationFrame(animationId);
         }
+
+        // Input validation and assignment
+        invisibleInput.addEventListener("input", () => {
+            const inputValue = parseInt(invisibleInput.value, 10);
+            if (!isNaN(inputValue) && inputValue > 0) {
+                studied = inputValue;
+                // Filter kanjiStudied array based on the input value
+                kanjiStudied.length = 0; // Clear the array
+                kanjiStudied = kanji.slice(0, studied);
+            } else {
+                studied = 0;
+                kanjiStudied.length = 0; // Clear the array if input is invalid
+            }
+        });
 
 
 
