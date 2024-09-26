@@ -21,6 +21,15 @@
             font-style: normal;
         }
 
+        :root {
+            --N5-color: #1d99f3;
+            --N4-color: #1cdc9a;
+            --N3-color: #c9ce3b;
+            --N2-color: #f67400;
+            --N1-color: #da4453;
+            --none-color: #fafafa;
+        }
+
         body,
         html {
             margin: 0;
@@ -86,6 +95,45 @@
             display: inline-block;
             margin-right: 10px;
         }
+
+        #statistics {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            user-select: none;
+            color: #fafafa;
+        }
+
+        #statistics p {
+            margin: 5px 0;
+        }
+
+        #n5-percentage {
+            color: var(--N5-color);
+        }
+
+        #n4-percentage {
+            color: var(--N4-color);
+        }
+
+        #n3-percentage {
+            color: var(--N3-color);
+        }
+
+        #n2-percentage {
+            color: var(--N2-color);
+        }
+
+        #n1-percentage {
+            color: var(--N1-color);
+        }
+
+        #none-percentage {
+            color: var(--none-color);
+        }
     </style>
 </head>
 
@@ -96,13 +144,29 @@
     </div>
 
     <div id="legend">
-        <div class="legend-item"><span class="legend-color" style="background-color: #1d99f3;"></span> JLPT N5</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #1cdc9a;"></span> JLPT N4</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #c9ce3b;"></span> JLPT N3</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #f67400;"></span> JLPT N2</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #da4453;"></span> JLPT N1</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #fafafa;"></span>?</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N5-color)"></span> JLPT N5
+        </div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N4-color)"></span> JLPT N4
+        </div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N3-color)"></span> JLPT N3
+        </div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N2-color)"></span> JLPT N2
+        </div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--N1-color);"></span> JLPT N1
+        </div>
+        <div class="legend-item"><span class="legend-color" style="background-color: var(--none-color);"></span>?</div>
     </div>
+
+    <div id="statistics">
+        <p>Total Kanji: <span id="total-kanji">0</span></p>
+        <p>JLPT N5: <span id="n5-percentage">0%</span></p>
+        <p>JLPT N4: <span id="n4-percentage">0%</span></p>
+        <p>JLPT N3: <span id="n3-percentage">0%</span></p>
+        <p>JLPT N2: <span id="n2-percentage">0%</span></p>
+        <p>JLPT N1: <span id="n1-percentage">0%</span></p>
+        <p>None: <span id="none-percentage">0%</span></p>
+    </div>
+
 
 
 
@@ -138,6 +202,25 @@
         const kanjiStudied = kanji.slice(0, studied);
         const rainContainer = document.getElementById("rain-container");
         const dropRateSlider = document.getElementById("drop-rate-slider");
+
+        const totalKanjiElement = document.getElementById("total-kanji");
+        const n5PercentageElement = document.getElementById("n5-percentage");
+        const n4PercentageElement = document.getElementById("n4-percentage");
+        const n3PercentageElement = document.getElementById("n3-percentage");
+        const n2PercentageElement = document.getElementById("n2-percentage");
+        const n1PercentageElement = document.getElementById("n1-percentage");
+        const nonePercentageElement = document.getElementById("none-percentage");
+
+        let kanjiCount = {
+            total: 0,
+            n5: 0,
+            n4: 0,
+            n3: 0,
+            n2: 0,
+            n1: 0,
+            none: 0
+        };
+
 
         // Matter.js setup
         const { Engine, Render, Runner, Bodies, Composite, Body } = Matter;
@@ -289,7 +372,36 @@
                 kanjiElement.style.transform = `rotate(${body.angle}rad)`;
             });
 
+            updateKanjiCount(kanjiChar);
             currentIndex++; // Move to the next kanji
+        }
+
+        function updateStatistics() {
+            totalKanjiElement.textContent = kanjiCount.total;
+            n5PercentageElement.textContent = kanjiCount.n5 + ' - ' + ((kanjiCount.n5 / kanjiCount.total) * 100).toFixed(2) + '%';
+            n4PercentageElement.textContent = kanjiCount.n4 + ' - ' + ((kanjiCount.n4 / kanjiCount.total) * 100).toFixed(2) + '%';
+            n3PercentageElement.textContent = kanjiCount.n3 + ' - ' + ((kanjiCount.n3 / kanjiCount.total) * 100).toFixed(2) + '%';
+            n2PercentageElement.textContent = kanjiCount.n2 + ' - ' + ((kanjiCount.n2 / kanjiCount.total) * 100).toFixed(2) + '%';
+            n1PercentageElement.textContent = kanjiCount.n1 + ' - ' + ((kanjiCount.n1 / kanjiCount.total) * 100).toFixed(2) + '%';
+            nonePercentageElement.textContent = kanjiCount.none + ' - ' + ((kanjiCount.none / kanjiCount.total) * 100).toFixed(2) + '%';
+        }
+
+        function updateKanjiCount(kanji) {
+            kanjiCount.total++;
+            if (JLPTLevel['JLPT N5'].includes(kanji)) {
+                kanjiCount.n5++;
+            } else if (JLPTLevel['JLPT N4'].includes(kanji)) {
+                kanjiCount.n4++;
+            } else if (JLPTLevel['JLPT N3'].includes(kanji)) {
+                kanjiCount.n3++;
+            } else if (JLPTLevel['JLPT N2'].includes(kanji)) {
+                kanjiCount.n2++;
+            } else if (JLPTLevel['JLPT N1'].includes(kanji)) {
+                kanjiCount.n1++;
+            } else {
+                kanjiCount.none++;
+            }
+            updateStatistics();
         }
 
 
