@@ -9,6 +9,14 @@
 
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
+        @font-face {
+            font-family: 'honyaji-reregular';
+            src: url('honyaji-re-webfont.woff2') format('woff2'),
+                url('honyaji-re-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         /* CSS Reset */
         * {
             margin: 0;
@@ -35,12 +43,12 @@
         }
 
         .grid-item {
-            font-family: 'Truculenta', sans-serif;
+            font-family: 'honyaji-reregular', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             border: 1px solid #ccc;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #fafafa;
             aspect-ratio: 1/1;
             box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
