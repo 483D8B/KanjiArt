@@ -14,6 +14,14 @@
             box-sizing: border-box;
         }
 
+        @font-face {
+            font-family: 'honyaji-reregular';
+            src: url('honyaji-re-webfont.woff2') format('woff2'),
+                url('honyaji-re-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body,
         html {
             width: 100%;
@@ -31,9 +39,10 @@
 
         .kanji {
             position: absolute;
-            font-size: 30px;
+            font-size: 1rem;
             color: #fafafa;
             animation: fall linear forwards, wave 3s infinite ease-in-out;
+            font-family: 'honyaji-reregular', sans-serif;
         }
 
         @keyframes fall {
@@ -50,19 +59,19 @@
 
             0%,
             100% {
-                transform: translateX(0);
+                transform: translateX(0) scale(1);
             }
 
             25% {
-                transform: translateX(-20px);
+                transform: translateX(-20px) scale(1.1);
             }
 
             50% {
-                transform: translateX(20px);
+                transform: translateX(20px) scale(0.9);
             }
 
             75% {
-                transform: translateX(-15px);
+                transform: translateX(-15px) scale(1.05);
             }
         }
     </style>
@@ -80,7 +89,7 @@
             kanjiElement.classList.add("kanji");
             kanjiElement.textContent = kanji[Math.floor(Math.random() * kanji.length)];
 
-            kanjiElement.style.left = `${Math.random() * (window.innerWidth - 30)}px`;
+            kanjiElement.style.left = `${Math.random() * (window.innerWidth - 18)}px`;
 
             const fallDuration = Math.random() * 4 + 3;
             kanjiElement.style.animationDuration = `${fallDuration}s, 3s`;
@@ -89,7 +98,7 @@
 
             setTimeout(() => {
                 kanjiElement.style.animation = 'none';
-                kanjiElement.style.top = `${window.innerHeight - 30}px`;
+                kanjiElement.style.top = `${window.innerHeight - 18}px`;
             }, fallDuration * 1000);
         }
 
