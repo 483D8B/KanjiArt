@@ -41,15 +41,16 @@
         }
 
         h1 {
+            position: absolute;
             color: #fafafa;
             text-shadow: 0 0 15px rgba(255, 255, 255, .5), 0 0 10px rgba(255, 255, 255, .5);
             font-family: 'honyaji-reregular', sans-serif;
             font-size: 3rem;
-            position: absolute;
-            opacity: 0.1;
-            top: 50%;
+            bottom: 50px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
+            opacity: 0.1;
+            user-select: none;
         }
 
         #rain-container {
@@ -74,31 +75,36 @@
 
         #controls {
             position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
+            width: 90%;
+            max-width: 600px;
         }
 
         #drop-rate-slider {
-            width: 300px;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         #legend {
-            position: absolute;
-            top: 30px;
-            left: 10px;
+            position: relative;
             padding: 10px;
             border-radius: 5px;
-            z-index: 1000;
             user-select: none;
             color: #fafafa;
+            opacity: 0.5;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
             margin: 5px 0;
         }
 
@@ -135,11 +141,8 @@
         }
 
         #play-button {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: block;
+            position: relative;
+            opacity: 0.9;
             margin-top: 15px;
             padding: 5px 10px;
             font-size: 16px;
@@ -153,15 +156,11 @@
         }
 
         #invisibleInput {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             opacity: 0.4;
             border: 1px solid transparent;
             border-bottom: 1px solid #fafafa;
             caret-color: #fafafa;
-            z-index: 2000;
             text-align: center;
             line-height: 1.5;
             font-size: 2rem;
@@ -169,25 +168,21 @@
             color: #fafafa;
             font-family: 'honyaji-reregular', sans-serif;
             width: 4em;
+            margin-top: 15px;
         }
 
         #invisibleInput:focus {
             outline: none;
         }
 
-        /* New styles for the label */
         label[for="invisibleInput"] {
-            position: absolute;
-            top: calc(30% - 2.5rem);
-            /* Position it below the input */
-            left: 50%;
-            transform: translateX(-50%);
             color: #fafafa;
             font-family: 'honyaji-reregular', sans-serif;
             font-size: 1rem;
             opacity: 0.7;
-            z-index: 2000;
             white-space: nowrap;
+            user-select: none;
+            margin-bottom: 5px;
         }
 
         /* Optional: Add some spacing between the input and label */
@@ -262,6 +257,28 @@
                 --_c: var(--c);
             }
         }
+
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+                white-space: nowrap;
+            }
+
+            #legend {
+                font-size: 0.8rem;
+            }
+
+            label[for="invisibleInput"] {
+                font-size: 0.8rem;
+            }
+
+            #invisibleInput {
+                width: 3em;
+                font-size: 1.5rem;
+            }
+
+        }
     </style>
 </head>
 
@@ -270,35 +287,37 @@
     <div id="controls">
         <input type="range" id="drop-rate-slider" min="100" max="2000" value="100">
         <button id="play-button">Play</button>
-    </div>
+        <div id="legend">
+            <p>Total Kanji: <span id="total-kanji">0</span></p>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--N5-color)"></span>
+                <p>JLPT N5: <span id="n5-percentage">0%</span></p>
+            </div>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--N4-color)"></span>
+                <p>JLPT N4: <span id="n4-percentage">0%</span></p>
+            </div>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--N3-color)"></span>
+                <p>JLPT N3: <span id="n3-percentage">0%</span></p>
+            </div>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--N2-color)"></span>
+                <p>JLPT N2: <span id="n2-percentage">0%</span></p>
+            </div>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--N1-color);"></span>
+                <p>JLPT N1: <span id="n1-percentage">0%</span></p>
+            </div>
+            <div class="legend-item"><span class="legend-color" style="background-color: var(--other-color);"></span>
+                <p>Others: <span id="other-percentage">0%</span></p>
+            </div>
+        </div>
 
-    <div id="legend">
-        <p>Total Kanji: <span id="total-kanji">0</span></p>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N5-color)"></span>
-            <p>JLPT N5: <span id="n5-percentage">0%</span></p>
-        </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N4-color)"></span>
-            <p>JLPT N4: <span id="n4-percentage">0%</span></p>
-        </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N3-color)"></span>
-            <p>JLPT N3: <span id="n3-percentage">0%</span></p>
-        </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N2-color)"></span>
-            <p>JLPT N2: <span id="n2-percentage">0%</span></p>
-        </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--N1-color);"></span>
-            <p>JLPT N1: <span id="n1-percentage">0%</span></p>
-        </div>
-        <div class="legend-item"><span class="legend-color" style="background-color: var(--other-color);"></span>
-            <p>Others: <span id="other-percentage">0%</span></p>
-        </div>
+        <input type="text" id="invisibleInput">
+        <label for="invisibleInput">Drop # kanji:</label>
     </div>
 
 
 
     <h1>Kanji Rain</h1>
-    <input type="text" id="invisibleInput">
-    <label for="invisibleInput">Drop # kanji:</label>
+
+
 
     <div id="rain-container"></div>
     <script>
